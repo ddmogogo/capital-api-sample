@@ -124,14 +124,36 @@ static void __free_ql(void);
 static void __free_ql(void) {
     if(__lib != NULL) FreeLibrary(__lib);
 }
+
+static void __connect_notify    ( int nKind, int nCode );
+//static void __quote_notify      ( short sMarketNo, short sStockidx);
+static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr);
+//static void __ticksget_notify   ( short sMarketNo, short sStockidx, int nPtr, int nTime, int nBid, int nAsk, int nClose, int nQty);
+
+
+static void __connect_notify    ( int nKind, int nCode ) {
+}
+static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr) {
+}
+
 ////////////////////////////////////////
 
 
 
 //###################################################
 char QL_LoginServer(char* username, char* password) {
+    __load_ql();
 
+    SKQuoteLib_Initialize(username,password);
+    SKQuoteLib_AttachConnectionCallBack ( (long)__connect_notify );
+    SKQuoteLib_AttachTicksCallBack ( (long)__tick_notify );
+
+    SKQuoteLib_EnterMonitor();
+
+    return 1;
 }
+
+
 void QL_Bye(void) {
 
 }
