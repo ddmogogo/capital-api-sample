@@ -155,7 +155,8 @@ char QL_LoginServer(char* username, char* password) {
 
 
 void QL_Bye(void) {
-
+    SKQuoteLib_LeaveMonitor();
+    __free_ql();
 }
 //###################################################
 
