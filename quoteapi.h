@@ -42,6 +42,38 @@ typedef struct TICK
 extern char QL_LoginServer(char* username, char* password);
 extern void QL_Bye(void);
 
+#define SK_SUCCESS      0
+#define SK_FAIL         -1
+#define SK_ERROR_STRING_LENGTH_NOT_ENOUGH   -2
+#define SK_ERROR_SERVER_NOT_CONNECTED       -3
+#define SK_ERROR_INITIALIZE_FAIL            -4
+#define SK_ERROR_ACCOUNT_NOT_EXIST          1
+#define SK_ERROR_ACCOUNT_MARKET_NOT_MATCH   2
+#define SK_ERROR_PERIOD_OUT_OF_RANGE        3
+#define SK_ERROR_FLAG_OUT_OF_RANGE          4
+#define SK_ERROR_BUYSELL_OUT_OF_RANGE       5
+#define SK_ERROR_ORDER_SERVER_INVALID       6
+#define SK_ERROR_PERMISSION_DENIED          7
+#define SK_KLINE_DATA_TYPE_NOT_FOUND        8
+#define SK_ERROR_PERMISSION_TIMEOUT         9
+
+#define SK_SUBJECT_CONNECTION_CONNECTED     100
+#define SK_SUBJECT_CONNECTION_DISCONNECT    101
+#define SK_SUBJECT_QUOTE_PAGE_EXCEED        200
+#define SK_SUBJECT_QUOTE_PAGE_INCORRECT     201
+#define SK_SUBJECT_TICK_PAGE_EXCEED         210
+#define SK_SUBJECT_TICK_PAGE_INCORRECT      211
+#define SK_SUBJECT_TICK_STOCK_NOT_FOUND     212
+#define SK_SUBJECT_BEST5_DATA_NOT_FOUND     213
+#define SK_SUBJECT_QUOTEREQUEST_NOT_FOUND   214
+#define SK_SUBJECT_SERVER_TIME_NOT_FOUND    215
+
+
+extern int __servererr;
+extern char QL_ERR;
+
+#define QL_R_OK     0
+#define QL_R_FAIL   0x100 + 1;
 
 #endif
 
