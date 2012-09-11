@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <windows.h>
 #include "quoteapi.h"
 
@@ -12,7 +13,7 @@ static int  (*__pointer_SKQuoteLib_AttachConnectionCallBack)    (long lCallBack)
 static int  (*__pointer_SKQuoteLib_AttachQuoteCallBack)         (long lCallBack);
 static int  (*__pointer_SKQuoteLib_AttachTicksCallBack)         (long lCallBack);
 static int  (*__pointer_SKQuoteLib_AttachTicksGetCallBack)      (long lCallBack);
-
+static int  (*__pointer_SKQuoteLib_GetTick)                     (short sMarketNo, short sStockidx,int nPtr, TTick* pTick);
 /*
 int __stdcall SKQuoteLib_GetVersion( [out] char* lpszVersion, [in,out] int* pnSize) 
 int __stdcall SKQuoteLib_Initialize( [in]char* lpszLoginID, [in]char* lpszPassword) 
@@ -60,6 +61,7 @@ int __stdcall SKQuoteLib_AttachFutureTradeInfoCallBack ( [in] long CallBack)
 #define SKQuoteLib_LeaveMonitor     (*__pointer_SKQuoteLib_LeaveMonitor)
 #define SKQuoteLib_RequestStocks    (*__pointer_SKQuoteLib_RequestStocks)
 #define SKQuoteLib_RequestTicks     (*__pointer_SKQuoteLib_RequestTicks)
+#define SKQuoteLib_GetTick          (*__pointer_SKQuoteLib_GetTick)
 
 #define SKQuoteLib_AttachConnectionCallBack (*__pointer_SKQuoteLib_AttachConnectionCallBack)
 #define SKQuoteLib_AttachQuoteCallBack      (*__pointer_SKQuoteLib_AttachQuoteCallBack)
@@ -117,6 +119,10 @@ static char __load_ql(void) {
     if(__funcp == NULL) return -1;
     __pointer_SKQuoteLib_RequestStocks = __funcp;
 
+    __funcp = GetProcAddress(__lib,"SKQuoteLib_GetTick");
+    if(__funcp == NULL) return -1;
+    __pointer_SKQuoteLib_GetTick = __funcp;
+
     return 1;
 }
 
@@ -132,9 +138,17 @@ static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr);
 
 
 static void __connect_notify    ( int nKind, int nCode ) {
-    printf("Connect callback notify. nKind = %d , nCode = %d\n");
+    printf("Connect callback notify. nKind = %d , nCode = %d\n",nKind,nCode);
 }
 static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr) {
+
+    TTick   data;
+    printf("Tick callback notify. sMarketNo = %d,sStockidx = %d,nPtr = %d\n",sMarketNo,sStockidx,nPtr);
+
+    SKQuoteLib_GetTick(sMarketNo,sStockidx,nPtr,&data);
+
+    printf("Get data. tick price is %d\n",data.m_nClose);
+
 }
 
 ////////////////////////////////////////
