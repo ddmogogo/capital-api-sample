@@ -132,6 +132,7 @@ static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr);
 
 
 static void __connect_notify    ( int nKind, int nCode ) {
+    printf("Connect callback notify. nKind = %d , nCode = %d\n");
 }
 static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr) {
 }
