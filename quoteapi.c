@@ -3,17 +3,17 @@
 #include "quoteapi.h"
 
 //DLL function . use LoadLibrary / GetProcAddress to get function address
-static int  (*__pointer_SKQuoteLib_GetVersion)      (char* lpszVersion,int* pnSize);
-static int  (*__pointer_SKQuoteLib_Initialize)      (char* lpszLoginID,char* lpszPassword);
-static int  (*__pointer_SKQuoteLib_EnterMonitor)    (void);
-static int  (*__pointer_SKQuoteLib_LeaveMonitor)    (void);
-static int  (*__pointer_SKQuoteLib_RequestStocks)   (short* psPageNo,char* pStockNos);
-static int  (*__pointer_SKQuoteLib_RequestTicks)    (short* psPageNo,char* pStockNo);
-static int  (*__pointer_SKQuoteLib_AttachConnectionCallBack)    (long lCallBack);
-static int  (*__pointer_SKQuoteLib_AttachQuoteCallBack)         (long lCallBack);
-static int  (*__pointer_SKQuoteLib_AttachTicksCallBack)         (long lCallBack);
-static int  (*__pointer_SKQuoteLib_AttachTicksGetCallBack)      (long lCallBack);
-static int  (*__pointer_SKQuoteLib_GetTick)                     (short sMarketNo, short sStockidx,int nPtr, TTick* pTick);
+static int  __stdcall (*__pointer_SKQuoteLib_GetVersion)      (char* lpszVersion,int* pnSize);
+static int  __stdcall (*__pointer_SKQuoteLib_Initialize)      (char* lpszLoginID,char* lpszPassword);
+static int  __stdcall (*__pointer_SKQuoteLib_EnterMonitor)    (void);
+static int  __stdcall (*__pointer_SKQuoteLib_LeaveMonitor)    (void);
+static int  __stdcall (*__pointer_SKQuoteLib_RequestStocks)   (short* psPageNo,char* pStockNos);
+static int  __stdcall (*__pointer_SKQuoteLib_RequestTicks)    (short* psPageNo,char* pStockNo);
+static int  __stdcall (*__pointer_SKQuoteLib_AttachConnectionCallBack)    (long lCallBack);
+static int  __stdcall (*__pointer_SKQuoteLib_AttachQuoteCallBack)         (long lCallBack);
+static int  __stdcall (*__pointer_SKQuoteLib_AttachTicksCallBack)         (long lCallBack);
+static int  __stdcall (*__pointer_SKQuoteLib_AttachTicksGetCallBack)      (long lCallBack);
+static int  __stdcall (*__pointer_SKQuoteLib_GetTick)                     (short sMarketNo, short sStockidx,int nPtr, TTick* pTick);
 /*
 int __stdcall SKQuoteLib_GetVersion( [out] char* lpszVersion, [in,out] int* pnSize) 
 int __stdcall SKQuoteLib_Initialize( [in]char* lpszLoginID, [in]char* lpszPassword) 
@@ -131,16 +131,16 @@ static void __free_ql(void) {
     if(__lib != NULL) FreeLibrary(__lib);
 }
 
-static void __connect_notify    ( int nKind, int nCode );
-//static void __quote_notify      ( short sMarketNo, short sStockidx);
-static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr);
-//static void __ticksget_notify   ( short sMarketNo, short sStockidx, int nPtr, int nTime, int nBid, int nAsk, int nClose, int nQty);
+static      void __stdcall __connect_notify ( int nKind, int nCode );
+//static    void __stdcall __quote_notify   ( short sMarketNo, short sStockidx);
+static      void __stdcall __tick_notify    ( short sMarketNo, short sStockidx, int nPtr);
+//static    void __stdcall __ticksget_notify( short sMarketNo, short sStockidx, int nPtr, int nTime, int nBid, int nAsk, int nClose, int nQty);
 
 
-static void __connect_notify    ( int nKind, int nCode ) {
+static void __stdcall __connect_notify    ( int nKind, int nCode ) {
     printf("Connect callback notify. nKind = %d , nCode = %d\n",nKind,nCode);
 }
-static void __tick_notify       ( short sMarketNo, short sStockidx, int nPtr) {
+static void __stdcall __tick_notify       ( short sMarketNo, short sStockidx, int nPtr) {
 
     TTick   data;
     printf("Tick callback notify. sMarketNo = %d,sStockidx = %d,nPtr = %d\n",sMarketNo,sStockidx,nPtr);
