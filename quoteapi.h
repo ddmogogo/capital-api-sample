@@ -41,6 +41,7 @@ typedef struct TICK
 
 extern char QL_LoginServer(char* username, char* password);
 extern void QL_Bye(void);
+extern char QL_Request(char* stockname);
 
 #define SK_SUCCESS      0
 #define SK_FAIL         -1

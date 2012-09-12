@@ -173,5 +173,16 @@ void QL_Bye(void) {
     SKQuoteLib_LeaveMonitor();
     __free_ql();
 }
+
+
+char QL_Request(char* stockname) {
+    short int __page;
+    
+    __page = -1;
+    SKQuoteLib_RequestTicks(&__page,stockname);
+
+    return 1;
+}
+
 //###################################################
 
