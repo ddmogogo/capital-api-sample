@@ -3,6 +3,13 @@
 #include "quoteapi.h"
 
 const char g_szClassName[] = "quoteview";
+static unsigned int _Tid;
+
+void CALLBACK TimerProc(HWND hwnd, UINT message, UINT timerID, DWORD time) ;
+void CALLBACK TimerProc(HWND hwnd, UINT message, UINT timerID, DWORD time) {
+    QL_Request("MTX09");//this line will compile fail. that is tip
+    KillTimer(NULL,_Tid);
+} 
 
 // Step 4: the Window Procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -12,8 +19,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         case WM_CREATE:
             printf("message %x\n",msg);
-            QL_LoginServer(/*"ID","Password"*/); //this line will compile fail. that is tip
-            QL_Request(/*""*/);//this line will compile fail. that is tip
+            QL_LoginServer(/*"",""*/); //this line will compile fail. that is tip
+            _Tid = SetTimer(NULL,0,5000,TimerProc);
             break;
 
         case WM_CLOSE:
