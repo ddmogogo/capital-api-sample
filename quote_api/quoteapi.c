@@ -70,7 +70,10 @@ int __stdcall SKQuoteLib_AttachFutureTradeInfoCallBack ( [in] long CallBack)
 
 ////////////////////////////////////////
 
-static HINSTANCE __lib = NULL;
+static HINSTANCE    __lib = NULL;
+static HANDLE       __ref_get_data_thread = NULL;
+static int  __last_trade_id = 0;
+static short int __market,__stock;
 
 static char __load_ql(void);
 static char __load_ql(void) {
@@ -131,6 +134,23 @@ static void __free_ql(void) {
     if(__lib != NULL) FreeLibrary(__lib);
 }
 
+static DWORD WINAPI __get_tick_thread(LPVOID lpArg);
+static DWORD WINAPI __get_tick_thread(LPVOID lpArg) {
+    TTick   data;
+    int __local_nptr = 0;
+
+    while(1) {
+        while(__local_nptr < __last_trade_id) {
+            SKQuoteLib_GetTick(__market,__stock,__local_nptr,&data);
+            printf("Get data. tick price is %d\n",data.m_nClose);
+            __local_nptr++;
+        }
+        SuspendThread(__ref_get_data_thread);
+    }
+    return 0;
+}
+
+
 static      void __stdcall __connect_notify ( int nKind, int nCode );
 //static    void __stdcall __quote_notify   ( short sMarketNo, short sStockidx);
 static      void __stdcall __tick_notify    ( short sMarketNo, short sStockidx, int nPtr);
@@ -142,13 +162,11 @@ static void __stdcall __connect_notify    ( int nKind, int nCode ) {
 }
 static void __stdcall __tick_notify       ( short sMarketNo, short sStockidx, int nPtr) {
 
-    TTick   data;
     printf("Tick callback notify. sMarketNo = %d,sStockidx = %d,nPtr = %d\n",sMarketNo,sStockidx,nPtr);
-
-    SKQuoteLib_GetTick(sMarketNo,sStockidx,nPtr,&data);
-
-    printf("Get data. tick price is %d\n",data.m_nClose);
-
+    __last_trade_id = nPtr;
+    __market    = sMarketNo;
+    __stock     = sStockidx;
+    ResumeThread(__ref_get_data_thread);
 }
 
 ////////////////////////////////////////
@@ -165,6 +183,11 @@ char QL_LoginServer(char* username, char* password) {
 
     SKQuoteLib_EnterMonitor();
 
+    __last_trade_id = 0;
+    __ref_get_data_thread = NULL;
+    __market = 0;
+    __stock  = 0;
+    __ref_get_data_thread = CreateThread( NULL, 0,__get_tick_thread, NULL,CREATE_SUSPENDED, NULL);
     return 1;
 }
 
