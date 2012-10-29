@@ -38,6 +38,8 @@ static int  __stdcall (*__pointer_SendFutureOrder)  (
 ////////////////////////////////////////
 
 static HINSTANCE __lib = NULL;
+static char __account[8][16];
+static int  __account_total=0;
 
 static char __load_ql(void);
 static char __load_ql(void) {
@@ -77,8 +79,29 @@ static void __free_ql(void) {
 //Void __stdcall OnAccount( BSTR bstrData);
 static void __stdcall __account_pull_notify (void* bstrData);
 static void __stdcall __account_pull_notify (void* bstrData) {
-    printf("Account callback notify.");
-    wprintf(L"[%s]\n",(wchar_t*)bstrData);
+    int i = 0,j = 0;
+    short int* _p = (short int*) bstrData;
+
+    printf("Account callback notify.\n");
+
+    for(i = 0; _p[i] != ',' ; i++) {};
+    _p+=(i+1);
+
+    for(i = 0; _p[i] != ',' ; i++,j++) {
+        __account[__account_total][j] = _p[i];
+    };
+    _p+=(i+1);
+
+    for(i = 0; _p[i] != ',' ; i++) {};
+    _p+=(i+1);
+
+    for(i = 0; _p[i] != ',' ; i++,j++) {
+        __account[__account_total][j] = _p[i];
+    };
+    __account[__account_total][j+1] = 0;
+
+    printf("[%d][%s]\n",__account_total,__account[__account_total]);
+    __account_total++;
 }
 
 ////////////////////////////////////////
@@ -105,7 +128,27 @@ void OL_Bye(void) {
     __free_ql();
 }
 
+char OL_Order(char* Stockname) {
+    char __res_msg[128];
+    int  __res_msg_size=128;
 
+    char _r;
+
+    _r = SKOrderLib_SendFutureOrder(
+                __account[0]
+                ,Stockname
+                ,0
+                ,0
+                ,0
+                ,"M"
+                ,1
+                ,__res_msg
+                ,&__res_msg_size
+                ) ;
+
+    printf("SKOrderLib_SendFutureOrder() return %d\n",_r);
+    return _r;
+}
 
 //###################################################
 

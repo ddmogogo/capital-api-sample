@@ -3,6 +3,6 @@
 
 char OL_LoginServer(char* username , char* password);
 void OL_Bye(void);
-
+char OL_Order(char* Stockname);
 #endif
 
