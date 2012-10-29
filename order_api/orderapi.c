@@ -95,6 +95,8 @@ char OL_LoginServer(char* username, char* password) {
             ,SKOrderLib_RegisterOnAccountCallBack((long)__account_pull_notify) );
     printf("SKOrderLib_GetUserAccount() return %d\n"
             ,SKOrderLib_GetUserAccount() );
+    printf("SKOrderLib_ReadCertByID() return %d\n"
+            ,SKOrderLib_ReadCertByID(username) );
     return 1;
 }
 
